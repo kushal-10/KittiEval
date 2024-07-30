@@ -18,13 +18,14 @@ def create_df():
     # Initialize an empty DataFrame with column types
     columns = ['label', 'truncated', 'occluded', 'alpha', 'left-top-x', 'left-top-y',
                'right-bottom-x', 'right-bottom-y', 'height', 'width', 'length',
-               'x', 'y', 'z', 'rotation_y']
+               'x', 'y', 'z', 'rotation_y', 'image']
     df = pd.DataFrame(columns=columns)
 
     # Collect each row entry
     rows = []
     for txt_file in label_txt_files:
         txt_file_path = os.path.join(LABEL_DIR, txt_file)
+        image_number = txt_file.split(".")[0]
         with open(txt_file_path, 'r') as f:
             lines = f.readlines()
 
@@ -35,7 +36,7 @@ def create_df():
                         'right-bottom-x': float(values[6]), 'right-bottom-y': float(values[7]),
                         'height': float(values[8]), 'width': float(values[9]), 'length': float(values[10]),
                         'x': float(values[11]), 'y': float(values[12]), 'z': float(values[13]),
-                        'rotation_y': float(values[14])}
+                        'rotation_y': float(values[14]), 'image': str(image_number)}
             rows.append(row_dict)
 
     new_df = pd.DataFrame(rows, columns=columns)
@@ -140,8 +141,8 @@ def plot_by_difficulty(df: pd.DataFrame):
 
 if __name__ == '__main__':
 
-    # # Uncomment if the labels have changed. A dataframe as a CSV is already provided here
-    # create_df()
+    # Uncomment if the labels have changed. A dataframe as a CSV is already provided here
+    create_df()
 
     df = pd.read_csv(os.path.join('dataset', 'gold_labels.csv'))
 
