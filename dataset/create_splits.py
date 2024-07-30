@@ -56,17 +56,17 @@ def check_splits(train_df: pd.DataFrame, valid_df: pd.DataFrame, test_df: pd.Dat
 
 
 if __name__ == "__main__":
-    df = pd.read_csv('dataset/gold_labels.csv')
+    df = pd.read_csv(os.path.join('dataset', 'csvs', 'gold_labels.csv'))
     train_df, valid_df, test_df = splits(df)
 
     # Final check that each split has unique image
     assert check_splits(train_df, valid_df, test_df)==False
 
-    train_df.to_csv(os.path.join('dataset', 'train_split.csv'), index=False)
-    valid_df.to_csv(os.path.join('dataset', 'valid_split.csv'), index=False)
-    test_df.to_csv(os.path.join('dataset', 'test_split.csv'), index=False)
+    train_df.to_csv(os.path.join('dataset', 'csvs', 'train_split.csv'), index=False)
+    valid_df.to_csv(os.path.join('dataset', 'csvs', 'valid_split.csv'), index=False)
+    test_df.to_csv(os.path.join('dataset', 'csvs', 'test_split.csv'), index=False)
 
-    print("Splits created and saved under /dataset/")
+    print("Splits created and saved under /dataset/csvs")
 
 
 

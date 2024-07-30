@@ -41,7 +41,7 @@ def create_df():
 
     new_df = pd.DataFrame(rows, columns=columns)
     df = pd.concat([df, new_df], ignore_index=True)
-    df.to_csv(os.path.join('dataset', 'gold_labels.csv'), index=False)
+    df.to_csv(os.path.join('dataset', 'csvs', 'gold_labels.csv'), index=False)
     print("Gold Labels collected from text files and saved to {}".format(os.path.join('gold_labels.csv')))
 
     return None
@@ -144,7 +144,7 @@ if __name__ == '__main__':
     # Uncomment if the labels have changed. A dataframe as a CSV is already provided here
     create_df()
 
-    df = pd.read_csv(os.path.join('dataset', 'gold_labels.csv'))
+    df = pd.read_csv(os.path.join('dataset', 'csvs', 'gold_labels.csv'))
 
     # Plot label counts
     plot_label_distr(df)
