@@ -1,7 +1,6 @@
 import pandas as pd
 import os
 import matplotlib.pyplot as plt
-import seaborn as sns
 
 def create_df():
     """
@@ -60,7 +59,7 @@ def plot_label_distr(df: pd.DataFrame):
 
     # Plot
     plt.figure(figsize=(12, 7))
-    bars = plt.bar(label_counts.index, label_counts.values, color='gray')
+    bars = plt.bar(label_counts.index, label_counts.values, color='skyblue')
 
     # Annotate percentages and counts on top of bars
     for bar, count, percentage in zip(bars, label_counts.values, label_percentages):
@@ -78,12 +77,10 @@ def plot_label_distr(df: pd.DataFrame):
     return None
 
 
-# Define a function to categorize difficulties
 def categorize_difficulty(row):
     """
-
     :param row: Row entry from the dataframe containing labels
-    :return: difficulty label
+    :return: List of difficulty labels
     """
     top_x = row['left-top-x']
     bottom_x = row['right-bottom-x']
@@ -91,16 +88,16 @@ def categorize_difficulty(row):
     occlusion = row['occluded']
     truncation = row['truncated']
 
-    # print(height, occlusion, truncation)
-    if height >= 40 and occlusion == 0 and truncation <= 0.15:
-        return 'Easy'
-    elif height >= 25 and occlusion <= 1 and truncation <= 0.30:
-        return 'Moderate'
-    elif height >= 25 and occlusion >= 2 and truncation <= 0.50:
-        return 'Hard'
-    else:
-        return 'Unknown'
+    difficulties = []
 
+    if height >= 40 and occlusion == 0 and truncation <= 0.15:
+        difficulties.append('Easy')
+    if height >= 25 and occlusion <= 1 and truncation <= 0.30:
+        difficulties.append('Moderate')
+    if height >= 25 and occlusion <= 2 and truncation <= 0.50:
+        difficulties.append('Hard')
+
+    return difficulties if difficulties else ['Unknown']
 
 def plot_by_difficulty(df: pd.DataFrame):
     """
@@ -112,16 +109,19 @@ def plot_by_difficulty(df: pd.DataFrame):
     # Apply the function to create a new column 'difficulty'
     df['difficulty'] = df.apply(categorize_difficulty, axis=1)
 
-    # Filter for rows where 'label' is 'car'
-    car_df = df[df['label'] == 'Car']
+    # Flatten the list of difficulties
+    difficulties = [difficulty for sublist in df['difficulty'] for difficulty in sublist]
+
+    # Create a DataFrame for plotting
+    difficulty_df = pd.DataFrame(difficulties, columns=['difficulty'])
 
     # Calculate counts and percentages
-    label_counts = car_df['difficulty'].value_counts()
+    label_counts = difficulty_df['difficulty'].value_counts()
     label_percentages = label_counts / label_counts.sum() * 100
 
     # Plot
     plt.figure(figsize=(12, 7))
-    bars = plt.bar(label_counts.index, label_counts.values, color='gray')
+    bars = plt.bar(label_counts.index, label_counts.values, color='skyblue')
 
     # Annotate percentages and counts on top of bars
     for bar, count, percentage in zip(bars, label_counts.values, label_percentages):
@@ -129,7 +129,6 @@ def plot_by_difficulty(df: pd.DataFrame):
         label_text = f'{percentage:.2f}% ({count})'
         plt.text(bar.get_x() + bar.get_width() / 2, height, label_text,
                  ha='center', va='bottom')
-
 
     plt.title('Distribution of Difficulty for Cars')
     plt.xlabel('Difficulty Level')

@@ -9,22 +9,19 @@ def splits(df: pd.DataFrame) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
     :return: train, validation and test dataframes
     """
 
-    # Consider only Car dataframe
-    df_filtered = df[df['label'] == 'Car']
-
     # Group by 'image' and aggregate data
     # This ensures no images are overlapping between the splits
-    grouped = df_filtered.groupby('image')
+    grouped = df.groupby('image')
     images = list(grouped.groups.keys())
 
     # Split the images into train, valid, and test sets
-    train_images, temp_images = train_test_split(images, test_size=0.3, random_state=42) # 70 - 30 split
-    valid_images, test_images = train_test_split(temp_images, test_size=0.5, random_state=42) # 50-50 split (from rem 30%)
+    train_images, temp_images = train_test_split(images, test_size=0.3, random_state=42)  # 70 - 30 split
+    valid_images, test_images = train_test_split(temp_images, test_size=0.5, random_state=42)  # 50-50 split (from rem 30%)
 
     # Create dataframes for train, valid, and test sets
-    train_df = df_filtered[df_filtered['image'].isin(train_images)]
-    valid_df = df_filtered[df_filtered['image'].isin(valid_images)]
-    test_df = df_filtered[df_filtered['image'].isin(test_images)]
+    train_df = df[df['image'].isin(train_images)]
+    valid_df = df[df['image'].isin(valid_images)]
+    test_df = df[df['image'].isin(test_images)]
 
     return train_df, valid_df, test_df
 

@@ -33,7 +33,7 @@ python3 dataset/create_splits.py
 
 This will create 3 files `train_split.csv`, `test_split.csv` and `valid_split.csv`
 
-3) View splits with difficulty level distribution
+3) View splits with difficulty level distribution ### STALE ###
 
 ```
 python3 dataset/explore_splits.py

@@ -3,44 +3,9 @@ import pandas as pd
 import os
 import re
 from tqdm import tqdm
-from contextlib import redirect_stdout
+import json
 import argparse
-
-
-def create_metadata(split_path: str):
-    """
-    Create metadata containing a single image entry with gold labels
-    :param split_path: Path of split under consideration
-    :return:
-    """
-
-    df = pd.read_csv(split_path)
-    df['bbox'] = df['bbox'].apply(parse_bbox)
-
-    image_bboxes = {}
-    for i in range(len(df)):
-        # Get image number
-        image = df['image'].iloc[i]
-
-        # Create image path
-        image_str = str(image)
-        while len(image_str) != 6:
-            image_str = "0"+image_str
-        image_str += ".png"
-        image_path = os.path.join('data', 'images', image_str)
-
-        if image_path not in image_bboxes:
-            image_bboxes[image_path] = [df['bbox'].iloc[i]]
-        else:
-            image_bboxes[image_path].append(df['bbox'].iloc[i])
-
-    return image_bboxes
-
-def parse_bbox(bbox_str):
-    bbox_str = bbox_str.replace('np.float64(', '').replace(')', '')
-    bbox_list = re.findall(r"([0-9.]+)", bbox_str)
-    # Convert to floats
-    return [float(x) for x in bbox_list]
+import numpy as np
 
 
 class YoloInference:
@@ -52,8 +17,9 @@ class YoloInference:
         self.split = split
         self.level = level
         self.model = YOLOv10.from_pretrained(model_name)
-        split_path = os.path.join('dataset', 'csvs', split+"_"+level+"_split.csv")
-        self.metadata = create_metadata(split_path)
+        split_path = os.path.join('dataset', 'jsons', level+"_"+split+".json")
+        with open(split_path, 'r') as file:
+            self.data = json.load(file)
 
     def infer(self, image_path):
         """
@@ -62,7 +28,7 @@ class YoloInference:
         :return: predictions with bounding boxes of cars and speed of inference
         """
 
-        predictions = {'bboxes': [], 'speed': {}}
+        predictions = {'bboxes': [], 'speed': {}, 'conf': []}
 
         # Run inference on a list of images
         results = self.model([image_path])  # return a list of Results objects
@@ -70,16 +36,17 @@ class YoloInference:
         # Process results list
         for result in results:
             boxes = result.boxes.xyxy.cpu()  # Boxes object for bounding box outputs
-            classes = result.boxes.cls.cpu()
+            classes = result.boxes.cls.cpu()  # Class values integers
             speed = result.speed  # preprocess, inference, postprocess
+            conf = result.boxes.conf.cpu().numpy()  # Confidence score for each box
             for i, box in enumerate(boxes):
-                if int(classes[i]) == 2:
+                if int(classes[i]) == 2:  # Consider only Car predictions
                     predictions['bboxes'].append(box.cpu().numpy())
 
             predictions['speed'] = speed
+            predictions['conf'] = conf
 
         return predictions
-
 
     def generate_result(self):
         """
@@ -91,41 +58,40 @@ class YoloInference:
         if not os.path.exists(RES_DIR):
             os.makedirs(RES_DIR)
 
-        metadata_json = self.metadata
-
-        images = []
-        ground_truths = []
-        predictions = []
-        preprocess_speed = []
-        inference_speed = []
-        postprocess_speed = []
-
-        for key in tqdm(metadata_json, desc=f"Generating Predictions for {self.model_name}"):
-            images.append(key)
-            gold_bboxes = metadata_json[key]
-            ground_truths.append(gold_bboxes)
-
+        json_data = []
+        for key in tqdm(self.data, desc=f"Generating Predictions for {self.model_name}"):
+            ground_truths = self.data[key]
             pred = self.infer(key)
-            predictions.append(pred['bboxes'])
-            preprocess_speed.append(pred['speed']['preprocess'])
-            inference_speed.append(pred['speed']['inference'])
-            postprocess_speed.append(pred['speed']['postprocess'])
 
+            pred_bboxes = pred['bboxes']
+            pred_conf = pred['conf']
+            for i in range(len(pred_bboxes)):
+                curr_pred = pred_bboxes[i].tolist()
+                curr_conf = float(pred_conf[i])
+                curr_pred.append(curr_conf)  # append confidence score to the bbox values
 
-        result_data = {
-            'image': images,
-            'ground_truth': ground_truths,
-            'prediction': predictions,
-            'preprocess_speed': preprocess_speed,
-            'inference_speed': inference_speed,
-            'postprocess_speed': postprocess_speed
-        }
+                # Convert into proper format and append
+                # Now the Json contains both ground_truths and predictions with conf score
+                curr_data = {'Car_prediction': curr_pred}
+                ground_truths.append(curr_data)
+
+            # Add speed information as well - preprocess, inference and postprocess
+            speed_data = {
+                'speed_data': [
+                    pred['speed']['preprocess'],
+                    pred['speed']['inference'],
+                    pred['speed']['postprocess']
+                ]
+            }
+            ground_truths.append(speed_data)
+            json_data_instance = {key: ground_truths}
+            json_data.append(json_data_instance)
 
         name_splits = self.model_name.split('/')
-        save_path = os.path.join(RES_DIR, f"{name_splits[0]}_{name_splits[1]}_{self.split}.csv")
+        save_path = os.path.join(RES_DIR, f"{name_splits[0]}_{name_splits[1]}_{self.split}.json")
 
-        result_df = pd.DataFrame.from_dict(result_data)
-        result_df.to_csv(save_path, index=False)
+        with open(save_path, 'w') as file:
+            json.dump(json_data, file, indent=4)
         print("Predictions saved to {}".format(save_path))
 
 

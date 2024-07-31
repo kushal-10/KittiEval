@@ -1,3 +1,11 @@
+################
+"""
+STALE - Do not use.
+Will upgrade after finetuning, as files changed from CSV to JSON
+"""
+#################
+
+
 import pandas as pd
 import matplotlib.pyplot as plt
 import re
