@@ -100,16 +100,16 @@ class YoloInference:
         inference_speed = []
         postprocess_speed = []
 
-        # for key in tqdm(metadata_json, desc=f"Generating Predictions for {self.model_name}"):
-        #     images.append(key)
-        #     gold_bboxes = metadata_json[key]
-        #     ground_truths.append(gold_bboxes)
-        #
-        #     pred = self.infer(key)
-        #     predictions.append(pred['bboxes'])
-        #     preprocess_speed.append(pred['speed']['preprocess'])
-        #     inference_speed.append(pred['speed']['inference'])
-        #     postprocess_speed.append(pred['speed']['postprocess'])
+        for key in tqdm(metadata_json, desc=f"Generating Predictions for {self.model_name}"):
+            images.append(key)
+            gold_bboxes = metadata_json[key]
+            ground_truths.append(gold_bboxes)
+
+            pred = self.infer(key)
+            predictions.append(pred['bboxes'])
+            preprocess_speed.append(pred['speed']['preprocess'])
+            inference_speed.append(pred['speed']['inference'])
+            postprocess_speed.append(pred['speed']['postprocess'])
 
 
         result_data = {
