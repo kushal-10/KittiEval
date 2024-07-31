@@ -48,21 +48,21 @@ def save_difficulty_splits():
                 df_row = df.iloc[i]
                 label = df_row['label']
 
-                # Proceed only if valid_label [DontCare and Car]
-                if label in valid_labels:
-                    difficulties = check_instance(df_row)
-                    if level in difficulties:
-                        # Add this to the difficulty level data
-                        image = str(df_row['image'])
-                        while len(image) != 6:
-                            image = "0"+image
-                        image += ".png"
-                        image_path = os.path.join('data', 'images', image)
+                difficulties = check_instance(df_row)
+                if level in difficulties:
+                    # Add this to the difficulty level data
+                    image = str(df_row['image'])
+                    while len(image) != 6:
+                        image = "0"+image
+                    image += ".png"
+                    image_path = os.path.join('data', 'images', image)
 
-                        observation = {label: [df_row['left-top-x'], df_row['left-top-y'], df_row['right-bottom-x'], df_row['right-bottom-y']]}
-                        if image_path not in split_data:
-                            split_data[image_path] = []
+                    observation = {label: [df_row['left-top-x'], df_row['left-top-y'], df_row['right-bottom-x'], df_row['right-bottom-y']]}
+                    if image_path not in split_data:
+                        split_data[image_path] = []
 
+                    # Add observations only for valid_label [DontCare and Car]
+                    if label in valid_labels:
                         split_data[image_path].append(observation)
 
             save_path = os.path.join('dataset', 'jsons', level+"_"+split+".json")
