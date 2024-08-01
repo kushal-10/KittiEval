@@ -29,7 +29,7 @@ def create_df():
             lines = f.readlines()
 
         for line in lines:
-            values = line.strip().split()  # Adjust this split based on your actual data format
+            values = line.strip().split()
             row_dict = {'label': values[0], 'truncated': float(values[1]), 'occluded': int(values[2]),
                         'alpha': float(values[3]), 'left-top-x': float(values[4]), 'left-top-y': float(values[5]),
                         'right-bottom-x': float(values[6]), 'right-bottom-y': float(values[7]),

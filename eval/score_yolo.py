@@ -42,10 +42,11 @@ class YOLOScorer:
     Get Precision and Recall for a predefined IOU and Confidence threshold
     """
 
-    def __init__(self, result_path, iou_threshold: float = 0.7, conf_threshold: float = 0.5):
+    def __init__(self, result_path, iou_threshold: float = 0.7, conf_threshold: float = 0.5, min_height: int = 40):
         self.result_path = result_path
         self.iou_threshold = iou_threshold
         self. conf_threshold = conf_threshold
+        self.min_height = min_height
 
     @staticmethod
     def calculate_iou(prediction: list, ground_truth: list):
@@ -78,13 +79,11 @@ class YOLOScorer:
 
         return iou_score
 
-    def counts(self, data_object: dict, iou_threshold: float = 0.7, conf_threshold: float = 0.5):
+    def counts(self, data_object: dict):
         """
         Calculate counts of FP, TP, and FN for a given image predictions
 
         :param data_object: Prediction data for a given image, may contain "Car", "Car_prediction", "DontCare"
-        :param iou_threshold: The threshold of IOU between GT and Pred
-        :param conf_threshold: The threshold of confidence of the prediction
         :return: Counts for TP, FP, FN
         """
 
@@ -107,10 +106,11 @@ class YOLOScorer:
             FP = 0
             FN = 0
             for pred in predictions:
-                # Consider only the predictions for a given threshold of confidence score
+                # Consider only the predictions for a given threshold of confidence score and greater than a certain height
                 # Used for AP calculation
                 # Discard the rest of the predictions
-                if pred[-1] >= conf_threshold:
+                height = pred[3] - pred[1]
+                if pred[-1] >= self.conf_threshold and height >= self.min_height:
                     match_gt = []
                     for gt in ground_truths:
                         iou_score = self.calculate_iou(pred, gt)
@@ -119,7 +119,7 @@ class YOLOScorer:
 
                     # Check the maximum matching Ground truth bbox for this prediction
                     # If a bbox that was not matched previously is matched with this prediction, inc TP
-                    if sorted_match_gt[0][0] >= iou_threshold:
+                    if sorted_match_gt[0][0] >= self.iou_threshold:
                         if tuple(sorted_match_gt[0][1]) not in matched_gt:
                             TP += 1
                             matched_gt.add(tuple(sorted_match_gt[0][1]))
@@ -136,7 +136,7 @@ class YOLOScorer:
                             match_dc.append([iou_score, dc])
                         sorted_match_dc = sorted(match_dc, reverse=True)
 
-                        if sorted_match_dc[0][0] >= iou_threshold:
+                        if sorted_match_dc[0][0] >= self.iou_threshold:
                             if tuple(sorted_match_dc[0][1]) not in matched_dc:
                                 matched_dc.add(tuple(sorted_match_dc[0][1]))  # Add  to matched_dc and skip this prediction
                                 break
@@ -149,7 +149,7 @@ class YOLOScorer:
 
             return TP, FP, FN
 
-    def get_pr(self, processed_results, iou_threshold: float = 0.7, conf_threshold: float = 0.5):
+    def get_pr(self, processed_results):
         """
         Get Precision and Recall
         :param processed_results: A list of predictions for all images in a given setting
@@ -162,7 +162,7 @@ class YOLOScorer:
         FP = 0
         FN = 0
         for res in processed_results:
-            tp, fp, fn = self.counts(res, iou_threshold, conf_threshold)
+            tp, fp, fn = self.counts(res)
             TP += tp
             FP += fp
             FN += fn
@@ -177,7 +177,7 @@ class YOLOScorer:
         :return: Precision and Recall for a given result file
         """
         processed_results = process_results(self.result_path)
-        precision, recall = self.get_pr(processed_results, self.iou_threshold, self.conf_threshold)
+        precision, recall = self.get_pr(processed_results)
         return precision, recall
 
 
@@ -189,7 +189,7 @@ if __name__ == '__main__':
 
     for i in ious:
         for c in confs:
-            yolo_scorer = YOLOScorer(results_path, i, c)
+            yolo_scorer = YOLOScorer(results_path, i, c, 40)
             precision, recall = yolo_scorer.get_precision_recall()
             print(f"Precision : {precision}, Recall : {recall} for IOU Threshold: {i} and Conf: {c}")
 
