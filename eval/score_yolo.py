@@ -123,7 +123,7 @@ class YOLOScorer:
                         if tuple(sorted_match_gt[0][1]) not in matched_gt:
                             TP += 1
                             matched_gt.add(tuple(sorted_match_gt[0][1]))
-                            break
+                            continue
 
                     # Alt case - This predicted BBox was not matched with any GT box
                     # Check if any overlap with dontcare Region; If yes discard this, else inc FP count
@@ -139,7 +139,7 @@ class YOLOScorer:
                         if sorted_match_dc[0][0] >= self.iou_threshold:
                             if tuple(sorted_match_dc[0][1]) not in matched_dc:
                                 matched_dc.add(tuple(sorted_match_dc[0][1]))  # Add  to matched_dc and skip this prediction
-                                break
+                                continue
 
                     # If none of the above two cases are valid, add to False positive count
                     FP += 1
@@ -183,14 +183,15 @@ class YOLOScorer:
 
 if __name__ == '__main__':
 
-    results_path = os.path.join("results", "easy", "jameslahm_yolov10x_test.json")
+    results_path = os.path.join("results", "all", "jameslahm_yolov10x_test.json")
     ious = [0.1, 0.2, 0.3, 0.4, 0.9, 1]
     confs = [0.1, 0.2, 0.3, 0.4, 0.8, 0.9]
 
     for i in ious:
         for c in confs:
-            yolo_scorer = YOLOScorer(results_path, i, c, 40)
+            yolo_scorer = YOLOScorer(results_path, i, c, 0)
             precision, recall = yolo_scorer.get_precision_recall()
             print(f"Precision : {precision}, Recall : {recall} for IOU Threshold: {i} and Conf: {c}")
+
 
 

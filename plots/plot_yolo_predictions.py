@@ -71,7 +71,7 @@ def plot_predictions(image_data):
 
 if __name__ == '__main__':
 
-    json_path = os.path.join("results", "easy", "jameslahm_yolov10x_test.json")
+    json_path = os.path.join("results", "all", "jameslahm_yolov10x_test.json")
 
     with open(json_path, 'r') as f:
         image_data = json.load(f)

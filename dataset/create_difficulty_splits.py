@@ -27,6 +27,9 @@ def check_instance(df_row):
     if height >= 25 and occlusion <= 2 and truncation <= 0.5:
         difficulties.append('hard')
 
+    # Add an all case, For extremely good detectors
+    difficulties.append('all')
+
     return difficulties
 
 
@@ -37,10 +40,10 @@ def save_difficulty_splits():
     """
 
     main_splits = ['train', 'valid', 'test']
-    levels = ['easy', 'moderate', 'hard']
+    levels = ['easy', 'moderate', 'hard', 'all']
     valid_labels = ['Car', 'DontCare']
 
-    for level in tqdm(levels, desc="Creating Difficulty level splits for Easy, Moderate, and Hard"):
+    for level in tqdm(levels, desc="Creating Difficulty level splits for Easy, Moderate, Hard and All"):
         for split in main_splits:
             split_data = {}
             df = pd.read_csv(os.path.join('dataset', 'csvs', split+"_split.csv"))

@@ -50,6 +50,7 @@ if __name__ == '__main__':
         for line in lines:
             values = line.strip().split()
             if values[0] == 'Car':
-                plot_data.append([float(values[4]), float(values[5]), float(values[6]), float(values[7])])
+                if float(values[7]) - float(values[5]) > 40:
+                    plot_data.append([float(values[4]), float(values[5]), float(values[6]), float(values[7])])
 
         plot_bboxes_with_colors(image_path, plot_data)
