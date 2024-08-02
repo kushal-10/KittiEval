@@ -14,28 +14,31 @@ if not os.path.exists(os.path.join('data', 'images')):
 
 output_folder = os.path.join('data', 'images')
 
-print(f"Dataset: {dataset}")
-counter = 0
-# Iterate through the dataset
-for idx, example in enumerate(dataset):
-    # Replace 'image' with the key that holds the image data
-    print(example['train'])
-    # image_url = example['image']
-    #
-    # # Download the image
-    # response = requests.get(image_url)
-    # img = Image.open(BytesIO(response.content))
-    #
-    # # Define the path to save the image
-    # image_path = os.path.join(output_folder, f'image_{idx}.png')
-    #
-    # # Save the image
-    # img.save(image_path)
-    #
-    # print(f'Saved image {idx} to {image_path}')
+print(len(dataset['train']['image']))
 
-    counter += 1
-    if counter == 20:
-        break
+#
+# counter = 0
+# # Iterate through the dataset
+# for idx, example in enumerate(dataset):
+#     # Replace 'image' with the key that holds the image data
+#
+#     print(example[0])
+#     # image_url = example['image']
+#     #
+#     # # Download the image
+#     # response = requests.get(image_url)
+#     # img = Image.open(BytesIO(response.content))
+#     #
+#     # # Define the path to save the image
+#     # image_path = os.path.join(output_folder, f'image_{idx}.png')
+#     #
+#     # # Save the image
+#     # img.save(image_path)
+#     #
+#     # print(f'Saved image {idx} to {image_path}')
+#
+#     counter += 1
+#     if counter == 20:
+#         break
 
 print("SAVED ALL, LFG")
