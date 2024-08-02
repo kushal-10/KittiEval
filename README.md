@@ -1,7 +1,7 @@
 # KittiEval
 Project for SoSe24 course - Intelligent Data Analysis and Machine Learning II
 
-## Setup
+## A) Setup
 
 1) Clone this repository
 
@@ -15,7 +15,9 @@ source prepare_path.sh
 Store the images under `ROOT/data/images` and labels under `ROOT/data/labels`.
 
 
-## Create Splits
+## B) Create Splits
+
+### All files are provided in the repo. This step can be skipped. 
 
 1) Collect the labels from text files. This will create a CSV file of labels - `splits/csvs/labels.csv` 
 ```
@@ -27,10 +29,14 @@ python3 splits/collect_labels.py
 python3 splits/create_splits.py
 ```
 
-3) Create splits based on difficulty level
+3) Create splits based on difficulty level. This creates all 3 splits for each difficulty level and each difficulty_type.
+Added a custom difficulty type.
+```
+python3 splits/create_difficulty_splits.py
+```
 
 
-## Inference
+## C) Inference
 
 1) For base YoLo models - Run the following command with the required args to generate predictions. This will save 
 a CSV file containing ground truth values and predictions for an image along with the inference speeds under `results`

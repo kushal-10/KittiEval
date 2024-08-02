@@ -7,17 +7,22 @@ import json
 import argparse
 import numpy as np
 
+BASE_DIR = 'splits'
+SUB_DIR = 'difficulty_splits'
 
 class YoloInference:
     """
     Inference model for YOLOv10. Initialize with model_name
     """
-    def __init__(self, model_name: str, split: str, level: str):
+    def __init__(self, model_name: str, difficulty_type: str,  level: str, split: str):
         self.model_name = model_name
-        self.split = split
+        self.difficulty_type = difficulty_type
         self.level = level
+        self.split = split
         self.model = YOLOv10.from_pretrained(model_name)
-        split_path = os.path.join('dataset', 'jsons', level+"_"+split+".json")
+
+        split_path = os.path.join(BASE_DIR, SUB_DIR, difficulty_type, level, split+".json")
+
         with open(split_path, 'r') as file:
             self.data = json.load(file)
 
@@ -36,7 +41,7 @@ class YoloInference:
         # Process results list
         for result in results:
             boxes = result.boxes.xyxy.cpu()  # Boxes object for bounding box outputs
-            classes = result.boxes.cls.cpu()  # Class values integers
+            classes = result.boxes.cls.cpu()  # Class values - integers
             speed = result.speed  # preprocess, inference, postprocess
             conf = result.boxes.conf.cpu().numpy()  # Confidence score for each box
             for i, box in enumerate(boxes):
@@ -54,7 +59,7 @@ class YoloInference:
         :return: None
         """
 
-        RES_DIR = os.path.join('results', self.level)
+        RES_DIR = os.path.join('results', self.difficulty_type, self.level, self.split)
         if not os.path.exists(RES_DIR):
             os.makedirs(RES_DIR)
 
@@ -71,7 +76,6 @@ class YoloInference:
                 curr_pred.append(curr_conf)  # append confidence score to the bbox values
 
                 # Convert into proper format and append
-                # Now the Json contains both ground_truths and predictions with conf score
                 curr_data = {'Car_prediction': curr_pred}
                 ground_truths.append(curr_data)
 
@@ -88,21 +92,21 @@ class YoloInference:
             json_data.append(json_data_instance)
 
         name_splits = self.model_name.split('/')
-        save_path = os.path.join(RES_DIR, f"{name_splits[0]}_{name_splits[1]}_{self.split}.json")
+        save_path = os.path.join(RES_DIR, f"{name_splits[0]}_{name_splits[1]}.json")
 
         with open(save_path, 'w') as file:
             json.dump(json_data, file, indent=4)
         print("Predictions saved to {}".format(save_path))
 
 
-def save_results(model_name, split, level):
-    InferModel = YoloInference(model_name, split, level)
+def save_results(model_name, diff_type, level, split):
+    InferModel = YoloInference(model_name, diff_type, level, split)
     InferModel.generate_result()
 
 
 if __name__ == '__main__':
 
-    # python3 base_models/yolo_v10.py --model_name jameslahm/yolov10x --split test --level easy
+    # python3 models/yolo_v10.py --model_name jameslahm/yolov10x --split test --level easy --type custom
 
     parser = argparse.ArgumentParser(description='Run YOLO inference with specified parameters.')
     parser.add_argument('--model_name', type=str, required=True, help='The name of the model to use.')
@@ -110,7 +114,9 @@ if __name__ == '__main__':
                         help='The dataset split to use.')
     parser.add_argument('--level', type=str, choices=['hard', 'easy', 'moderate', 'all'], required=True,
                         help='The difficulty level of the dataset.')
+    parser.add_argument('--type', type=str, choices=['custom', 'base'], required=True,
+                        help='The type of the dataset.')
 
     args = parser.parse_args()
 
-    save_results(args.model_name, args.split, args.level)
+    save_results(args.model_name, args.type, args.level, args.split)
