@@ -16,28 +16,19 @@ Store the images under `ROOT/data/images` and labels under `ROOT/data/labels`.
 
 
 ## Create Splits
-Considering only `Car` label here.
-1) Collect the labels from text files and view the distribution by label, and distribution of `Car` by difficulty.
 
+1) Collect the labels from text files. This will create a CSV file of labels - `splits/csvs/labels.csv` 
 ```
-python3 dataset/labels_distribution.py
-```
-
-This will create a `gold_labels.csv` file under dataset
-
-2) Create Train (70%), Test(15%) and Validation(15%) splits 
-
-```
-python3 dataset/create_splits.py
+python3 splits/collect_labels.py
 ```
 
-This will create 3 files `train_split.csv`, `test_split.csv` and `valid_split.csv`
-
-3) View splits with difficulty level distribution ### STALE ###
-
+2) Create Train, Test and Validation splits. This will create 3 files - `train_split.csv`, `test_split.csv` and `valid_split.csv`
 ```
-python3 dataset/explore_splits.py
+python3 splits/create_splits.py
 ```
+
+3) Create splits based on difficulty level
+
 
 ## Inference
 
