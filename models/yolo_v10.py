@@ -112,7 +112,7 @@ if __name__ == '__main__':
     parser.add_argument('--model_name', type=str, required=True, help='The name of the model to use.')
     parser.add_argument('--split', type=str, choices=['train', 'test', 'valid'], required=True,
                         help='The dataset split to use.')
-    parser.add_argument('--level', type=str, choices=['hard', 'easy', 'moderate', 'all'], required=True,
+    parser.add_argument('--level', type=str, choices=['hard', 'easy', 'moderate', 'extreme'], required=True,
                         help='The difficulty level of the dataset.')
     parser.add_argument('--type', type=str, choices=['custom', 'base'], required=True,
                         help='The type of the dataset.')
