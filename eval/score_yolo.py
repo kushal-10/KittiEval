@@ -39,7 +39,8 @@ def process_results(json_path: str):
 class YOLOScorer:
     """
     Class to evaluate YOLO type models,
-    Get Precision and Recall for a predefined IOU and Confidence threshold
+    Get Precision and Recall for a predefined IOU, Confidence threshold and min_height.
+    Use only for 'extreme' case in base dataset/all valid for custom dataset
     """
 
     def __init__(self, result_path, iou_threshold: float = 0.7, conf_threshold: float = 0.5, min_height: int = 40):
@@ -153,8 +154,6 @@ class YOLOScorer:
         """
         Get Precision and Recall
         :param processed_results: A list of predictions for all images in a given setting
-        :param iou_threshold: Threshold for calculating IOU scores
-        :param conf_threshold: Threshold for discarding predictions
         :return: P, R - Precision and Recall at a given IoU threshold and confidence threshold
         """
 
@@ -183,7 +182,7 @@ class YOLOScorer:
 
 if __name__ == '__main__':
 
-    results_path = os.path.join("results", "all", "jameslahm_yolov10x_test.json")
+    results_path = os.path.join("results", "custom", 'easy', 'test', 'jameslahm_yolov10x.json')
     ious = [0.1, 0.2, 0.3, 0.4, 0.9, 1]
     confs = [0.1, 0.2, 0.3, 0.4, 0.8, 0.9]
 

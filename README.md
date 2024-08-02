@@ -50,3 +50,8 @@ python3 base_models/yolo_v10.py --model_name jameslahm/yolov10x --split test --l
 - split (required): The dataset split to use. Valid options are: `train`, `test`, `valid`
 
 - level (required): The difficulty level of the dataset. Valid options are: `hard`, `easy`, `moderate`
+
+- type (required): The dataset type to use. Valid options are: `custom`, `base`
+
+## D) Evaluation
+

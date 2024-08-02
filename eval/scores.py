@@ -9,10 +9,15 @@ dirs = os.listdir(RES_DIR)
 
 # Collect result JSONs
 json_paths = []
-for d in dirs:
-    jsons = os.listdir(os.path.join(RES_DIR, d))
-    for json in jsons:
-        json_paths.append(os.path.join(RES_DIR, d, json))
+for dataset in dirs:
+    path = os.path.join(RES_DIR, dataset)
+    levels = os.listdir(path)
+    for level in levels:
+        split_path = os.path.join(path, level)
+        for split in os.listdir(split_path):
+            jsons = os.listdir(os.path.join(split_path, split))
+            for json in jsons:
+                json_paths.append(os.path.join(split_path, split, json))
 
 
 def plot_pr_curve(json_path: str):
@@ -26,7 +31,7 @@ def plot_pr_curve(json_path: str):
     recalls = []
 
     for t in thresholds:
-        scorer = YOLOScorer(json_path, 0.7, t, 0)
+        scorer = YOLOScorer(json_path, 0.7, t, 40)
         p, r = scorer.get_precision_recall()
         precisions.append(p)
         recalls.append(r)
@@ -66,6 +71,7 @@ def calculate_ap(precisions, recalls):
 
 
 if __name__ == '__main__':
-    p, r = plot_pr_curve(os.path.join("results", "all", "jameslahm_yolov10x_test.json"))
+    path = json_paths[0]
+    p, r = plot_pr_curve(path)
     ap = calculate_ap(p, r)
     print(f"Average Precision: {ap}")
