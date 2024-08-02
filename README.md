@@ -55,3 +55,10 @@ python3 base_models/yolo_v10.py --model_name jameslahm/yolov10x --split test --l
 
 ## D) Evaluation
 
+After Inference all result files will be saved hierarchically under results. Run the following to create `results.html`, and `results.csv`
+
+```
+python3 eval/benchmark_results.py
+```
+
+## E) Fine-Tuning/Training
