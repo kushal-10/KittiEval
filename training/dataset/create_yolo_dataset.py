@@ -14,11 +14,12 @@ if not os.path.exists(os.path.join('data', 'images')):
 
 output_folder = os.path.join('data', 'images')
 
+print(f"Dataset: {dataset}")
 counter = 0
 # Iterate through the dataset
 for idx, example in enumerate(dataset):
     # Replace 'image' with the key that holds the image data
-    print(example)
+    print(example['train'])
     # image_url = example['image']
     #
     # # Download the image
