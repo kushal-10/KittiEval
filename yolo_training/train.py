@@ -6,7 +6,7 @@ import os
 model = YOLOv10("yolov10x.yaml")
 
 # Train the model
-dataset_path = os.path.join('data', 'huggingface', 'data.yaml')
+dataset_path = os.path.join('datasets', 'data.yaml')
 results = model.train(data=dataset_path, epochs=500, batch=256, imgsz=640)
 
 # Save to HF
