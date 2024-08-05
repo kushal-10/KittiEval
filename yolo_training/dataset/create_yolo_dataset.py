@@ -1,5 +1,6 @@
 # File to convert the data-set into YOLO compatible format,
 # as mentioned here - https://docs.ultralytics.com/datasets/detect/
+# and here - https://roboflow.com/formats/yolov10-pytorch-txt
 
 from datasets import load_dataset
 import os
@@ -77,8 +78,8 @@ def process_label_file(input_path, output_path, image_width, image_height):
         for line in infile:
             parts = line.strip().split()
             if parts[0] == 'Car':
-                # Convert 'Car' to '1'
-                class_id = '1'
+                # Convert 'Car' to '0'
+                class_id = '0'
                 # Extract columns 5, 6, 7, 8 and convert them to YOLO format
                 left = float(parts[4])
                 top = float(parts[5])
@@ -103,7 +104,7 @@ def create_dataset(level: str = 'extreme'):
 
     # Create a backup folder that contains all original labels for the splits
     # Used in evaluation
-    backup_folder = os.path.join(output_folder, 'backup')
+    backup_folder = os.path.join('data', 'backup')
     if not os.path.exists(backup_folder):
         os.makedirs(backup_folder)
 

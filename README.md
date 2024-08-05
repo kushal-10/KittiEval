@@ -70,3 +70,9 @@ The train, val set of `extreme` level is considered here from the previous evalu
 #### A) Creating custom dataset
 
 The dataset first needs to be converted into YOLO format - Moving the images and labels to particular sub folders of the split.
+
+```
+python3 yolo_training/dataset/create_yolo_dataset.py
+```
+
+#### B) Training

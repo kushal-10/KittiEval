@@ -1,0 +1,4 @@
+train: data/huggingface/train/images
+val: data/huggingface/val/images
+nc: 1
+names: [Car]
