@@ -1,7 +1,9 @@
 # KittiEval
 Project for SoSe24 course - Intelligent Data Analysis and Machine Learning II
 
-## A) Setup
+## 1) YOLO v10 Base Model Inference
+
+#### A) Setup
 
 1) Clone this repository
 
@@ -15,9 +17,9 @@ source prepare_path.sh
 Store the images under `ROOT/data/images` and labels under `ROOT/data/labels`.
 
 
-## B) Create Splits
+#### B) Create Splits
 
-### All files are provided in the repo. This step can be skipped. 
+##### All files are provided in the repo. This step can be skipped. 
 
 1) Collect the labels from text files. This will create a CSV file of labels - `splits/csvs/labels.csv` 
 ```
@@ -36,7 +38,7 @@ python3 splits/create_difficulty_splits.py
 ```
 
 
-## C) Inference
+#### C) Inference
 
 1) For base YoLo models - Run the following command with the required args to generate predictions. This will save 
 a CSV file containing ground truth values and predictions for an image along with the inference speeds under `results`
@@ -53,7 +55,7 @@ python3 base_models/yolo_v10.py --model_name jameslahm/yolov10x --split test --l
 
 - type (required): The dataset type to use. Valid options are: `custom`, `base`
 
-## D) Evaluation
+#### D) Evaluation
 
 After Inference all result files will be saved hierarchically under results. Run the following to create `results.html`, and `results.csv`
 
@@ -61,4 +63,10 @@ After Inference all result files will be saved hierarchically under results. Run
 python3 eval/benchmark_results.py
 ```
 
-## E) Fine-Tuning/Training
+## 2) Training YOLO v10
+
+The train, val set of `extreme` level is considered here from the previous evaluation. This covers all `Car` type predictions available in the dataset.
+
+#### A) Creating custom dataset
+
+The dataset first needs to be converted into YOLO format - Moving the images and labels to particular sub folders of the split.

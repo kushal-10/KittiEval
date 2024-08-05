@@ -64,6 +64,7 @@ def check_instance_custom(df_row):
         difficulties.append('hard')
 
     # Additional difficulty level, considering extreme cases
+    # Base and Custom extremes are same X|...
     difficulties.append('extreme')
 
     return difficulties

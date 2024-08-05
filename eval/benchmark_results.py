@@ -21,21 +21,23 @@ class BenchmarkResults:
         res_data = []
 
         datasets = os.listdir(res_dir)
+
         for dataset in datasets:
-            levels = os.listdir(os.path.join(res_dir, dataset))
-            for level in levels:
-                splits = os.listdir(os.path.join(res_dir, dataset, level))
-                for split in splits:
-                    jsons = os.listdir(os.path.join(res_dir, dataset, level, split))
-                    for json in jsons:
-                        model_name = json.split('.')[0]
-                        json_object = {
-                            "file_path": os.path.join(res_dir, dataset, level, split, json),
-                            "level": level,
-                            "dataset": dataset,
-                            "model_name": model_name
-                        }
-                        res_data.append(json_object)
+            if os.path.isdir(os.path.join(res_dir, dataset)):
+                levels = os.listdir(os.path.join(res_dir, dataset))
+                for level in levels:
+                    splits = os.listdir(os.path.join(res_dir, dataset, level))
+                    for split in splits:
+                        jsons = os.listdir(os.path.join(res_dir, dataset, level, split))
+                        for json in jsons:
+                            model_name = json.split('.')[0]
+                            json_object = {
+                                "file_path": os.path.join(res_dir, dataset, level, split, json),
+                                "level": level,
+                                "dataset": dataset,
+                                "model_name": model_name
+                            }
+                            res_data.append(json_object)
 
         return res_data
 
@@ -55,11 +57,25 @@ class BenchmarkResults:
             else:
                 return 0
 
+        # if res_obj["dataset"] == "base":
+        #     if res_obj["level"] == 'extreme':
+        #         return 0
+        #     else:
+        #         return -1
+
+        # Consider Base as well
+        # The performance of base_easy should be worse than custom_easy
+        # More False Positives (Not actually,...but ok)
         if res_obj["dataset"] == "base":
-            if res_obj["level"] == 'extreme':
-                return 0
+            if res_obj["level"] == 'easy':
+                return 40
+            elif res_obj["level"] == 'moderate':
+                return 30
+            elif res_obj["level"] == 'hard':
+                return 25
             else:
-                return -1
+                return 0
+
 
     @staticmethod
     def get_ap_score(precisions, recalls):
@@ -155,8 +171,3 @@ class BenchmarkResults:
 if __name__ == '__main__':
     res = BenchmarkResults()
     res.generate_scores()
-
-
-
-
-
