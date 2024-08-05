@@ -81,5 +81,6 @@ cp yolo_training/dataset/data.yaml data/huggingface/
 mkdir datasets
 mv data/huggingface/* datasets/
 ```
+This may also require to change the `dowloaded_dir` path. Change that accordingly and if required.
 
 #### B) Training
