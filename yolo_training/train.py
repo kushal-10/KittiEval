@@ -9,7 +9,7 @@ model = YOLOv10("yolov10n.yaml")
 
 # Train the model
 dataset_path = os.path.join('data.yaml')
-results = model.train(data=dataset_path, epochs=100, batch=32, imgsz=640,
+results = model.train(data=dataset_path, epochs=100, batch=4, imgsz=640,
                       save=True, device=0, cache=True, project='yolo_trained_models',
                       name='yolo10n_extreme_vanilla', pretrained=False, plots=True)
 
