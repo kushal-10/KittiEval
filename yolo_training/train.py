@@ -1,5 +1,7 @@
 from ultralytics import YOLOv10
 import os
+from clearml import Task
+task = Task.init(project_name='ida-ml', task_name='yolov10x-extreme-vanilla')
 
 # Load a model
 # Training from scratch
