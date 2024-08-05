@@ -75,8 +75,11 @@ The dataset first needs to be converted into YOLO format - Moving the images and
 python3 yolo_training/dataset/create_yolo_dataset.py
 ```
 
+Run the following to setup the proper path of the dataset
 ```
 cp yolo_training/dataset/data.yaml data/huggingface/
+mkdir datasets
+mv data/huggingface/* datasets/
 ```
 
 #### B) Training
