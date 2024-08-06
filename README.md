@@ -1,7 +1,7 @@
 # KittiEval
 Project for SoSe24 course - Intelligent Data Analysis and Machine Learning II
 
-## 1) Dataset Setup + YOLO v10 Base Model Inference
+## 1) Dataset
 
 #### A) Setup
 
@@ -37,32 +37,6 @@ Added a custom difficulty type.
 python3 splits/create_difficulty_splits.py
 ```
 
-
-#### C) Inference
-
-1) For base YoLo models - Run the following command with the required args to generate predictions. This will save 
-a CSV file containing ground truth values and predictions for an image along with the inference speeds under `results`
-
-For example, to generate predictions on Yolo_v10x on test set of Easy level, run the following
-```
-python3 base_models/yolo_v10.py --model_name jameslahm/yolov10x --split test --level easy
-```
-- model_name (required): The name of the YOLO model to use. Example values: `jameslahm/yolov10x`, `jameslahm/yolov10s`, `jameslahm/yolov10n`
-
-- split (required): The dataset split to use. Valid options are: `train`, `test`, `valid`
-
-- level (required): The difficulty level of the dataset. Valid options are: `hard`, `easy`, `moderate`
-
-- type (required): The dataset type to use. Valid options are: `custom`, `base`
-
-#### D) Evaluation
-
-After Inference all result files will be saved hierarchically under results. Run the following to create `results.html`, and `results.csv`
-
-```
-python3 eval/benchmark_results.py
-```
-
 ## 2) Training YOLO v10
 
 The train, val set of `extreme` level is considered here from the previous evaluation. This covers all `Car` type predictions available in the dataset.
@@ -88,17 +62,20 @@ This may also require to change the `dowloaded_dir` path. Change that accordingl
 Run the following command to train the YOLO model based on the arguments specified
 
 ```
-python3 yolo_training/train.py <model_name> <mode> <batch_size> <gpu> <multi_gpu>
+python3 yolo_training/train.py <model_name> <mode> <batch_size> <multi_gpu> <freeze> <lr0> <lrf> <momentum> <optimizer>
 ```
 OPTIONS:
 - model_name : yolov10n/s/m/b/l/x - Model size
 - mode : 'pt', 'vanilla' 
   - vanilla - Train from scratch
   - pt - Use pre-trained weights (fine-tuning)
-- batch_size : 16-...
-- gpu : Specified only to differentiate the runs and batch_size type, can be skipped
+- batch_size : Integer (Multiples of 4 preferred)
 - multi_gpu: If using multi-gpu setup, specify number of GPUs 1, 4 or 8
-
+- freeze : Number of layers to freeze, Only used when mode == pt
+- lr0 : initial learning rate (float val)
+- lrf : final learning rate (float val) (as a fraction of lr0)
+- momentum : Momentum factor for SGD or beta1 for Adam optimizers
+- optimizer : Choice of optimizer for training
 
 For Hyperparameter tuning - Run the following. Optionally set up search space under `yolo_training/tune.py`.
 
@@ -106,3 +83,31 @@ This prints a best set of hyperparameters for a specified budget using Bayesian 
 ```
 python3 yolo_training/tune.py
 ```
+
+## 3) Inference
+
+1) For base YoLo models - Run the following command with the required args to generate predictions. This will save 
+a CSV file containing ground truth values and predictions for an image along with the inference speeds under `results`
+
+For example, to generate predictions on Yolo_v10x on test set of Easy level, run the following
+```
+python3 base_models/yolo_v10.py --model_name jameslahm/yolov10x --split test --level easy
+```
+- model_name (required): The name of the YOLO model to use. Example values: `jameslahm/yolov10x`, `jameslahm/yolov10s`, `jameslahm/yolov10n`
+
+- split (required): The dataset split to use. Valid options are: `train`, `test`, `valid`
+
+- level (required): The difficulty level of the dataset. Valid options are: `hard`, `easy`, `moderate`
+
+- type (required): The dataset type to use. Valid options are: `custom`, `base`
+
+2) Same procedure for Trained YOLO models. A list of trained models can be found - [HF Collections](https://huggingface.co/collections/Koshti10/yolo-v10-trained-66b259715ab1dc49cd85e2ac)
+
+## 4) Evaluation
+
+After Inference all result files will be saved hierarchically under results. Run the following to create `results.html`, and `results.csv`
+
+```
+python3 eval/benchmark_results.py
+```
+

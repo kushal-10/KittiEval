@@ -3,8 +3,6 @@ from ultralytics import YOLOv10
 import os
 from skopt import gp_minimize
 from skopt.space import Integer, Categorical, Real
-import matplotlib.pyplot as plt
-from skopt.plots import plot_convergence, plot_objective, plot_gaussian_process
 from clearml import Task
 
 def objective(params):
@@ -25,7 +23,7 @@ def objective(params):
     # Config
     multi_gpu = [0,1,2,3]  # Set according to GPU availability
     model_name = 'yolov10n'   # OR yolov10x
-    mode = 'pt'   # OR 'vanilla'
+    mode = 'vanilla'   # OR 'pt'
     dataset_path = os.path.join('data.yaml')
 
     # Training process
@@ -62,7 +60,6 @@ def objective(params):
 # Define the hyperparameter space
 search_space = [
     Categorical([16,20,24,28,32], name='batch_size'),
-    Integer(10, 100, name='epochs'),
     Categorical(categories=['AdamW', 'SGD', 'auto'], name='optimizer'),
     Real(1e-3, 1e-2, name='lr0'),
     Real(1e-3, 1e-2, name='lrf'),
@@ -77,38 +74,8 @@ def run_optimization():
         random_state=42
     )
 
-    # Create and save plots
-    # Ensure the directory exists
-    output_dir = 'optimization_plots'
-    os.makedirs(output_dir, exist_ok=True)
-
-    # Save convergence plot
-    plt.figure()
-    plot_convergence(result)
-    plt.title('Convergence Plot')
-    plt.savefig(os.path.join(output_dir, 'convergence_plot.png'))
-    plt.close()
-
-    # Save objective plot
-    plt.figure()
-    plot_objective(result)
-    plt.title('Objective Function Plot')
-    plt.savefig(os.path.join(output_dir, 'objective_plot.png'))
-    plt.close()
-
-    # Save gaussian process
-    plt.figure()
-    plot_gaussian_process(result)
-    plt.title('Gaussian Process')
-    plt.savefig(os.path.join(output_dir, 'gaussian_plot.png'))
-    plt.close()
-
     # Print the best hyperparameters and score
-    print("Best hyperparameters found:")
-    print("Batch size:", result.x[0])
-    print("Epochs:", result.x[1])
-    print("Image size:", result.x[2])
-    print("Multi-GPU mode:", result.x[3])
+    print("Best hyperparameters found: ", result.x)
     print("Best score (negative mAP50-95):", result.fun)
 
 
