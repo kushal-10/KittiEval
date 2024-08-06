@@ -44,7 +44,7 @@ def train_model(model_name: str = "yolov10n", mode: str = 'vanilla', batch_size:
         model.push_to_hub(f"Koshti10/{model_name}-trained-Kitti-2D-detection", token=HF_TOKEN)
 
     else:
-        model = YOLOv10(f"{model_name}.pt")
+        model = YOLOv10.from_pretrained(f"jameslahm/{model_name}")
         results = model.train(data=dataset_path, epochs=100, batch=batch_size, imgsz=640, workers=1,
                               save=True, device=multi_gpu, cache=True, project='trained_models',
                               name=f'{model_name}_extreme_{mode}_{gpu_name}', pretrained=True, plots=True)
