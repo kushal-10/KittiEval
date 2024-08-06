@@ -26,24 +26,15 @@ def train_model(model_name: str = "yolov10n", mode: str = 'vanilla', batch_size:
 
     dataset_path = os.path.join('data.yaml')
 
-    # Setup Parameters
-    # Convert str to int
-    batch_size = int(batch_size)
     # Setup appropriate GPU devices
-    if multi_gpu == '1':
+    if multi_gpu == 1:
         multi_gpu = [0]
-    elif multi_gpu == '4':
+    elif multi_gpu == 4:
         multi_gpu = [0,1,2,3]
     else:
         multi_gpu = [0,1,2,3,4,5,6,7]
     # Get HF token
     HF_TOKEN = os.getenv('HF_TOKEN')
-    # Learning rates
-    lr0 = float(lr0)
-    lrf = float(lrf)
-    momentum = float(momentum)
-    # Freeze layers
-    freeze = int(freeze)
 
     # Load a model
     if mode == 'vanilla':
