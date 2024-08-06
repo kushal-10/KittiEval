@@ -76,7 +76,6 @@ class BenchmarkResults:
             else:
                 return 0
 
-
     @staticmethod
     def get_ap_score(precisions, recalls):
         """
@@ -89,8 +88,8 @@ class BenchmarkResults:
         recalls = np.array(recalls)
 
         # Append a point at (0,1) to the beginning to cover the edge case
-        recalls = np.concatenate(([0.0], recalls))
-        precisions = np.concatenate(([1.0], precisions))
+        # recalls = np.concatenate(([0.0], recalls))
+        # precisions = np.concatenate(([1.0], precisions))
 
         # Sort precision and recall values
         indices = np.argsort(recalls)
@@ -101,17 +100,35 @@ class BenchmarkResults:
         precisions = np.maximum.accumulate(precisions[::-1])[::-1]
 
         # Compute the Average Precision using the trapezoidal rule
-        ap = np.sum(np.diff(recalls) * precisions[:-1])
+        # ap = np.sum(np.diff(recalls) * precisions[:-1])
 
-        return ap
+        # Try with 11 point AP
+        # Fixed recall levels for 11-point AP
+        recall_levels = np.linspace(0, 1, 41)
+        recall_levels = recall_levels[1:]
 
-    def calculate_ap_scores(self, file_path: str, min_height: int, spacing: int = 11):
+        # Interpolate precision values at each recall level
+        ap11_precisions = []
+        for r in recall_levels:
+            # Find the maximum precision for recall >= r
+            relevant_precisions = precisions[recalls >= r]
+            if relevant_precisions.size > 0:
+                max_precision = np.max(relevant_precisions)
+            else:
+                max_precision = 0  # Or handle the case as needed
+            ap11_precisions.append(max_precision)
+
+        ap11 = np.mean(ap11_precisions)
+
+        return ap11
+
+    def calculate_ap_scores(self, file_path: str, min_height: int):
         """
         :param file_path: The result file path
         :param min_height: Minimum height in pixels
-        :param spacing: The number of spacing between confidence scores to calculate Average Precison
-        :return: AP score with the specified level of confidence score spacing
+        :return: AP score
         """
+        spacing = 100
         thresholds = np.linspace(0, 1, spacing)
         precisions = []
         recalls = []
@@ -129,8 +146,7 @@ class BenchmarkResults:
         Generate the scores for each file in the collected JSON result files
         :return: A DF containing the scores for each file in the collected JSON result files
         """
-        ap_41s = []
-        ap_11s = []
+        aps = []
         setting = []
         model = []
 
@@ -142,21 +158,16 @@ class BenchmarkResults:
             model.append(obj["model_name"])
 
             if min_height == -1:
-                ap_41s.append(None)
-                ap_11s.append(None)
-
+                aps.append(None)
             else:
                 # Calculate AP with 11 threshold points
-                ap11_score = self.calculate_ap_scores(file_path, min_height, spacing=11)
-                ap_11s.append(ap11_score)
-                ap41_score = self.calculate_ap_scores(file_path, min_height, spacing=41)
-                ap_41s.append(ap41_score)
+                ap_score = self.calculate_ap_scores(file_path, min_height)
+                aps.append(ap_score)
 
         data = {
             "Model": model,
             "Dataset": setting,
-            "AP41": ap_41s,
-            "AP11": ap_11s
+            "APScore": aps
         }
 
         csv_save_path = os.path.join(RES_DIR, "results.csv")

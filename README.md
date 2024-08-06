@@ -101,8 +101,7 @@ python3 models/yolo_v10.py --model_name jameslahm/yolov10x --split test --level 
 
 - type (required): The dataset type to use. Valid options are: `custom`, `base`
 
-2) Same procedure for Trained YOLO models. A list of trained models can be found - [HF Collections](https://huggingface.co/collections/Koshti10/yolo-v10-trained-66b259715ab1dc49cd85e2ac)
-
+2) Same procedure for Trained YOLO models. A list of trained models can be found - [HF Collections](https://huggingface.co/collections/Koshti10/yolo-v10-trained-66b259715ab1dc49cd85e2ac). Have the weights saved locally and same cli command as the base models - Replace model name with path to the weights
 ## 4) Evaluation
 
 After Inference all result files will be saved hierarchically under results. Run the following to create `results.html`, and `results.csv`

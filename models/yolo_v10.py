@@ -19,7 +19,12 @@ class YoloInference:
         self.difficulty_type = difficulty_type
         self.level = level
         self.split = split
-        self.model = YOLOv10.from_pretrained(model_name)
+        if model_name.endswith('.pt'):
+            self.model = YOLOv10(model_name)
+            self.class_id = 0
+        else:
+            self.model = YOLOv10.from_pretrained(model_name)
+            self.class_id = 2
 
         split_path = os.path.join(BASE_DIR, SUB_DIR, difficulty_type, level, split+".json")
 
@@ -45,7 +50,7 @@ class YoloInference:
             speed = result.speed  # preprocess, inference, postprocess
             conf = result.boxes.conf.cpu().numpy()  # Confidence score for each box
             for i, box in enumerate(boxes):
-                if int(classes[i]) == 2:  # Consider only Car predictions
+                if int(classes[i]) == self.class_id:  # Consider only Car predictions
                     predictions['bboxes'].append(box.cpu().numpy())
 
             predictions['speed'] = speed
@@ -91,7 +96,10 @@ class YoloInference:
             json_data_instance = {key: ground_truths}
             json_data.append(json_data_instance)
 
-        name_splits = self.model_name.split('/')
+        if self.model_name.endswith('.pt'):
+            name_splits = self.model_name.split('-')
+        else:
+            name_splits = self.model_name.split('/')
         save_path = os.path.join(RES_DIR, f"{name_splits[0]}_{name_splits[1]}.json")
 
         with open(save_path, 'w') as file:
