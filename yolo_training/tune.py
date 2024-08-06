@@ -1,6 +1,5 @@
 import numpy as np
 from ultralytics import YOLOv10
-from clearml import Task
 import os
 from skopt import gp_minimize
 from skopt.space import Integer, Categorical, Real
@@ -13,7 +12,13 @@ def objective(params):
     :param params: Hyperparameters
     :return:
     """
-    batch_size, epochs, optimizer, lr0, lrf, momentum  = params
+    batch_size, epochs, optimizer, lr0, lrf, momentum = params
+    # Ensure that all parameters are converted to Python natives
+    batch_size = int(batch_size)
+    epochs = int(epochs)
+    lr0 = float(lr0)
+    lrf = float(lrf)
+    momentum = float(momentum)
 
     # Config
     multi_gpu = [0]  # Set according to GPU availability
@@ -32,12 +37,14 @@ def objective(params):
         epochs=epochs,
         batch=batch_size,
         imgsz=640,
+        lr0=lr0,
+        lrf=lrf,
+        momentum=momentum,
         workers=1,
         save=True,
         device=multi_gpu,
         cache=True,
         project='tuned_models',
-        # name=f'{model_name}_extreme_{mode}',
         pretrained=(mode == 'pt'),
         plots=True
     )
