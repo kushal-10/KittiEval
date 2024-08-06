@@ -84,3 +84,17 @@ mv data/huggingface/* datasets/
 This may also require to change the `dowloaded_dir` path. Change that accordingly and if required.
 
 #### B) Training
+
+Run the following command to train the YOLO model based on the arguments specified
+
+```
+python3 yolo_training/train.py <model_name> <mode> <batch_size> <gpu> <multi_gpu>
+```
+OPTIONS:
+- model_name : yolov10n/s/m/b/l/x - Model size
+- mode : 'pt', 'vanilla' 
+  - vanilla - Train from scratch
+  - pt - Use pre-trained weights (fine-tuning)
+- batch_size : 16-...
+- gpu : Specified only to differentiate the runs and batch_size type, can be skipped
+- multi_gpu: If using multi-gpu setup, specify number of GPUs 1, 4 or 8

@@ -6,3 +6,4 @@ datasets==2.20.0
 scikit-learn==1.5.1
 shapely==2.0.5
 clearml==1.16.2
+scikit-optimize==0.10.2
