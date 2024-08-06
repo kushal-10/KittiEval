@@ -21,7 +21,7 @@ def objective(params):
     momentum = float(momentum)
 
     # Config
-    multi_gpu = [0]  # Set according to GPU availability
+    multi_gpu = [0,1,2,3]  # Set according to GPU availability
     model_name = 'yolov10n'   # OR yolov10x
     mode = 'pt'   # OR 'vanilla'
     dataset_path = os.path.join('data.yaml')
