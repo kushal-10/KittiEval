@@ -3,6 +3,11 @@ import os
 from clearml import Task
 import argparse
 
+# Setup Hyperparameters
+lr0 = 0.01
+lrf = 0.01
+momentum = 0.937
+optimizer = 'auto'
 
 def train_model(model_name: str = "yolov10n", mode: str = 'vanilla', batch_size: int = 16, gpu_name: str = 'a100', multi_gpu: str = '1'):
     """
@@ -39,6 +44,7 @@ def train_model(model_name: str = "yolov10n", mode: str = 'vanilla', batch_size:
         model = YOLOv10(f"{model_name}.yaml")
         results = model.train(data=dataset_path, epochs=100, batch=batch_size, imgsz=640, workers=1,
                               save=True, device=multi_gpu, cache=True, project='trained_models',
+                              lr0=lr0, lrf=lrf, momentum=momentum, optimizer=optimizer,
                               name=f'{model_name}_extreme_{mode}_{gpu_name}', pretrained=False, plots=True)
         # Save to HF
         model.push_to_hub(f"Koshti10/{model_name}-trained-Kitti-2D-detection", token=HF_TOKEN)
@@ -47,6 +53,7 @@ def train_model(model_name: str = "yolov10n", mode: str = 'vanilla', batch_size:
         model = YOLOv10.from_pretrained(f"jameslahm/{model_name}")
         results = model.train(data=dataset_path, epochs=100, batch=batch_size, imgsz=640, workers=1,
                               save=True, device=multi_gpu, cache=True, project='trained_models',
+                              lr0=lr0, lrf=lrf, momentum=momentum, optimizer=optimizer,
                               name=f'{model_name}_extreme_{mode}_{gpu_name}', pretrained=True, plots=True)
 
         # Save to HF

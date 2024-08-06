@@ -1,7 +1,7 @@
 # KittiEval
 Project for SoSe24 course - Intelligent Data Analysis and Machine Learning II
 
-## 1) YOLO v10 Base Model Inference
+## 1) Dataset Setup + YOLO v10 Base Model Inference
 
 #### A) Setup
 
@@ -98,3 +98,11 @@ OPTIONS:
 - batch_size : 16-...
 - gpu : Specified only to differentiate the runs and batch_size type, can be skipped
 - multi_gpu: If using multi-gpu setup, specify number of GPUs 1, 4 or 8
+
+
+For Hyperparameter tuning - Run the following. Optionally set up search space under `yolo_training/tune.py`.
+
+This prints a best set of hyperparameters for a specified budget using Bayesian Optimization.
+```
+python3 yolo_training/tune.py
+```
