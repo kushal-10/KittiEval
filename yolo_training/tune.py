@@ -59,9 +59,9 @@ def objective(params):
 
 # Define the hyperparameter space
 search_space = [
-    Integer(16, 32, name='batch_size'),
-    Integer(25, 100, name='epochs'),
-    Categorical(categories=['AdamW', 'SGD'], name='optimizer'),
+    Categorical([16,20,24,28,32], name='batch_size'),
+    Integer(10, 100, name='epochs'),
+    Categorical(categories=['AdamW', 'SGD', 'auto'], name='optimizer'),
     Real(1e-3, 1e-2, name='lr0'),
     Real(1e-3, 1e-2, name='lrf'),
     Real(0.8, 0.99, name='momentum')
