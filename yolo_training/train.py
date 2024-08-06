@@ -30,6 +30,9 @@ def train_model(model_name: str = "yolov10n", mode: str = 'vanilla', batch_size:
     else:
         multi_gpu = [0,1,2,3,4,5,6,7]
 
+    # Get HF token
+    HF_TOKEN = os.getenv('HF_TOKEN')
+
     # Load a model
     if mode == 'vanilla':
         # Training from scratch
@@ -37,15 +40,17 @@ def train_model(model_name: str = "yolov10n", mode: str = 'vanilla', batch_size:
         results = model.train(data=dataset_path, epochs=100, batch=batch_size, imgsz=640, workers=1,
                               save=True, device=multi_gpu, cache=True, project='trained_models',
                               name=f'{model_name}_extreme_{mode}_{gpu_name}', pretrained=False, plots=True)
+        # Save to HF
+        model.push_to_hub(f"Koshti10/{model_name}-trained-Kitti-2D-detection", token=HF_TOKEN)
+
     else:
         model = YOLOv10(f"{model_name}.pt")
         results = model.train(data=dataset_path, epochs=100, batch=batch_size, imgsz=640, workers=1,
                               save=True, device=multi_gpu, cache=True, project='trained_models',
                               name=f'{model_name}_extreme_{mode}_{gpu_name}', pretrained=True, plots=True)
 
-    # Save to HF
-    HF_TOKEN = os.getenv('HF_TOKEN')
-    model.push_to_hub(f"Koshti10/{model_name}-trained-Kitti-2D-detection", token=HF_TOKEN)
+        # Save to HF
+        model.push_to_hub(f"Koshti10/{model_name}-finetuned-Kitti-2D-detection", token=HF_TOKEN)
 
 
 if __name__ == '__main__':
