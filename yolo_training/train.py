@@ -20,7 +20,8 @@ def train_model(model_name: str = "yolov10n", mode: str = 'vanilla', batch_size:
     :param momentum: Momentum
     :param optimizer: Type of optimizer
     """
-    print(f"Training model {model_name} with mode {mode}")
+    print(f"Training model with parameters : model_name {model_name}, mode {mode}, batch_size {batch_size}",
+          f"multi_gpu {multi_gpu}, lr0 {lr0}, lrf {lrf}, momentum {momentum}, optimizer {optimizer}")
     task = Task.init(project_name='ida-ml', task_name=f'{model_name}-{mode}-final')
 
     dataset_path = os.path.join('data.yaml')
@@ -53,7 +54,7 @@ def train_model(model_name: str = "yolov10n", mode: str = 'vanilla', batch_size:
                               lr0=lr0, lrf=lrf, momentum=momentum, optimizer=optimizer, freeze=None,
                               pretrained=False, plots=True)
         # Save to HF
-        model.push_to_hub(f"Koshti10/{model_name}_{mode}_tuned", token=HF_TOKEN)
+        model.push_to_hub(f"Koshti10/{model_name}_{mode}_final", token=HF_TOKEN)
 
     else:
         model = YOLOv10.from_pretrained(f"jameslahm/{model_name}")
@@ -63,7 +64,7 @@ def train_model(model_name: str = "yolov10n", mode: str = 'vanilla', batch_size:
                               pretrained=True, plots=True)
 
         # Save to HF
-        model.push_to_hub(f"Koshti10/{model_name}_{mode}_tuned", token=HF_TOKEN)
+        model.push_to_hub(f"Koshti10/{model_name}_{mode}_final", token=HF_TOKEN)
 
 def parse_positive_int(value):
     ivalue = int(value)
