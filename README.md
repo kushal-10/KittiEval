@@ -91,7 +91,7 @@ a CSV file containing ground truth values and predictions for an image along wit
 
 For example, to generate predictions on Yolo_v10x on test set of Easy level, run the following
 ```
-python3 base_models/yolo_v10.py --model_name jameslahm/yolov10x --split test --level easy
+python3 models/yolo_v10.py --model_name jameslahm/yolov10x --split test --level extreme --type custom
 ```
 - model_name (required): The name of the YOLO model to use. Example values: `jameslahm/yolov10x`, `jameslahm/yolov10s`, `jameslahm/yolov10n`
 

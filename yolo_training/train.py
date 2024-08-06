@@ -80,7 +80,7 @@ if __name__ == '__main__':
     parser.add_argument('multi_gpu', type=parse_positive_int,
                         help='The number of GPUs to use for training. Must be a positive integer 1 4 or 8.')
     parser.add_argument('freeze', type=parse_positive_int,
-                        help='The number of layers to freeze for training. Must be a positive integer. Use 300 for nano and 600 for XL')
+                        help='The number of layers to freeze for training. Must be a positive integer 1-22')
     parser.add_argument('lr0', type=parse_positive_float,
                         help='The initial learning rate. Must be a positive float.')
     parser.add_argument('lrf', type=parse_positive_float,
