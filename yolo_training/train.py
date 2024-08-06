@@ -38,11 +38,11 @@ if __name__ == '__main__':
                         help='The name of the model to train. Options are yolov10n/s/m/b/l/x.')
     parser.add_argument('mode', choices=['pt', 'vanilla'],
                         help='The mode to use for training. Options are pt or vanilla.')
-    parser.add_argument('batch_size', choices=[2**n],
+    parser.add_argument('batch_size', choices=[16, 32, 64, 128, 256, 512],
                         help='The batch size to use for training.')
     parser.add_argument('gpu_name', choices=['a100', '1080'],
                         help='The gpu to use for training. Options are a100 or 1080')
-    parser.add_argument('multi_gpu', choices=[list[0:n]],
+    parser.add_argument('multi_gpu', choices=[[0], [0,1,2,3], [0,1,2,3,4,5,6,7,8]],
                         help='The number of gpus to use for training. Option is a list defining number [0...n]')
 
     args = parser.parse_args()
