@@ -5,7 +5,7 @@ from skopt import gp_minimize
 from skopt.space import Integer, Categorical, Real
 import matplotlib.pyplot as plt
 from skopt.plots import plot_convergence, plot_objective, plot_gaussian_process
-
+from clearml import Task
 
 def objective(params):
     """
@@ -19,6 +19,8 @@ def objective(params):
     lr0 = float(lr0)
     lrf = float(lrf)
     momentum = float(momentum)
+
+    task = Task.init(project_name='ida-ml', task_name=f'{batch_size}_{epochs}_{lr0}_{lrf}_{momentum}')
 
     # Config
     multi_gpu = [0,1,2,3]  # Set according to GPU availability
