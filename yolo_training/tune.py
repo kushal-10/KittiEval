@@ -71,7 +71,7 @@ def run_optimization():
     result = gp_minimize(
         func=objective,
         dimensions=search_space,
-        n_calls=50,  # Number of evaluations
+        n_calls=20,  # Number of evaluations
         random_state=42
     )
 
